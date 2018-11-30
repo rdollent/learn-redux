@@ -23,5 +23,6 @@ ReactDOM.render(
     document.querySelector("#app")
 );
 
+require('./redux-example.jsx');
 
 

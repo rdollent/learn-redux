@@ -36,6 +36,7 @@
     "mocha": "^2.4.5",
     "node-sass": "^4.9.2",
     "react-addons-test-utils": "^0.14.6",
+    "redux": "^3.3.1",
     "sass-loader": "^4.1.1",
     "script-loader": "^0.6.1",
     "style-loader": "^0.13.0",
