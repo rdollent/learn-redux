@@ -124,7 +124,8 @@
 	    "Boilerplate3"
 	), document.querySelector("#app"));
 
-	__webpack_require__(233);
+	// require('./redux-example.jsx');
+	__webpack_require__(254);
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
@@ -25830,64 +25831,7 @@
 
 
 /***/ }),
-/* 233 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var redux = __webpack_require__(234);
-
-	console.log(redux);
-
-	// Pure function
-	// same output using the same input no matter what
-	// takes inputs, then returns an output
-	// does not change the value of the inputs
-	// no side-effects
-	function add(a, b) {
-	    return a + b;
-	};
-
-	// impure functions
-
-	var a = 3;
-	function add(b) {
-	    return a + b;
-	}
-
-	var result;
-	function add(a, b) {
-	    result = a + b;
-	    return result;
-	}
-
-	function add(a, b) {
-	    return a + b + new Date().getSeconds();
-	}
-
-	function changeProp(obj) {
-	    // instead of obj.name = 'Jen';
-	    // return obj
-	    // that is impure.
-	    // objects and arrays are passed by reference, thus changing the value of original data
-	    // we want immutability
-	    return _extends({}, obj, {
-	        name: 'Jen'
-	    });
-	}
-
-	var startingValue = {
-	    name: 'Jun',
-	    age: 29
-	};
-
-	var res = changeProp(startingValue);
-
-	console.log(startingValue, res);
-
-/***/ }),
+/* 233 */,
 /* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26910,6 +26854,33 @@
 	    };
 	  });
 	}
+
+/***/ }),
+/* 254 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var redux = __webpack_require__(234);
+
+	var stateDefault = {
+	    searchText: '',
+	    showCompleted: false,
+	    todos: []
+	};
+
+	var reducer = function reducer() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateDefault;
+	    var action = arguments[1];
+
+	    return state;
+	};
+
+	var store = redux.createStore(reducer);
+
+	var currentState = store.getState();
+
+	console.log('currentState', currentState);
 
 /***/ })
 /******/ ]);

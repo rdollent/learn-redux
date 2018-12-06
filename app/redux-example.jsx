@@ -50,3 +50,27 @@ var startingValue = {
 var res = changeProp(startingValue);
 
 console.log(startingValue, res);
+
+
+//////////////////////////////////////////////////////
+// redux!!!!
+/////////////////////////////////////////
+
+// pass previous state and action
+// reducer will do something with it
+// return the new state
+let reducer = (state = {name: 'Anonymous'}, action) => {
+    // need default if there is no state
+    // syntax above is equivalent to this:
+    // state = state || {name: 'Anonymous'};
+    // meaning if no state was passed, use default value
+    
+    return state;
+};
+
+
+let store = redux.createStore(reducer);
+
+// fetch the state
+let currentState = store.getState();
+console.log('currentState', currentState);
