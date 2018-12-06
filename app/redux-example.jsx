@@ -83,6 +83,19 @@ let reducer = (state = {name: 'Anonymous'}, action) => {
 
 let store = redux.createStore(reducer);
 
+//subscibe to changes
+// takes a callback that runs when the state changes
+// use this instead of console logging all the time
+// when you call subscribe, it actually returns a function
+// this function, when called, will unsusbscribe you
+
+let unsubscribe = store.subscribe(() => {
+    // logical thing is to check state whenever state changes
+    let state = store.getState();
+    
+    console.log('new state is', state);
+});
+
 // fetch the state
 let currentState = store.getState();
 console.log('currentState', currentState);
@@ -99,4 +112,11 @@ let action = {
 // this will run the reducer function
 store.dispatch(action);
 
-console.log('name should be Jun', store.getState());
+// test unsubscribe by calling it after first action dispatch
+
+
+// add another dispatch just to check if subscribe button works
+store.dispatch({
+    type: 'CHANGE_NAME',
+    name: 'Emilyyyy'
+})
