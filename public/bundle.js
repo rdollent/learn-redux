@@ -26861,6 +26861,8 @@
 
 	'use strict';
 
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
 	var redux = __webpack_require__(234);
 
 	var stateDefault = {
@@ -26873,7 +26875,14 @@
 	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateDefault;
 	    var action = arguments[1];
 
-	    return state;
+	    switch (action.type) {
+	        case 'CHANGE_SEARCH_TEXT':
+	            return _extends({}, state, {
+	                searchText: action.searchText
+	            });
+	        default:
+	            return state;
+	    }
 	};
 
 	var store = redux.createStore(reducer);
@@ -26881,6 +26890,15 @@
 	var currentState = store.getState();
 
 	console.log('currentState', currentState);
+
+	var action = {
+	    type: 'CHANGE_SEARCH_TEXT',
+	    searchText: 'search everything!'
+	};
+
+	store.dispatch(action);
+
+	console.log(store.getState());
 
 /***/ })
 /******/ ]);

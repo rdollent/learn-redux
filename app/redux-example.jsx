@@ -65,7 +65,19 @@ let reducer = (state = {name: 'Anonymous'}, action) => {
     // state = state || {name: 'Anonymous'};
     // meaning if no state was passed, use default value
     
-    return state;
+    // console.log('new action', action);
+    
+    switch (action.type) {
+        case 'CHANGE_NAME':
+            return {
+                ...state,
+                name: action.name
+            };
+        
+        default:
+            return state;
+    }
+
 };
 
 
@@ -74,3 +86,17 @@ let store = redux.createStore(reducer);
 // fetch the state
 let currentState = store.getState();
 console.log('currentState', currentState);
+
+// use actions to change state
+// no need to have any arguments except 'type'
+// type typically is in uppercase, and uses underscore for whitespace
+let action = {
+    type: 'CHANGE_NAME',
+    name: 'Jun'
+}
+
+// dispatch an action
+// this will run the reducer function
+store.dispatch(action);
+
+console.log('name should be Jun', store.getState());
