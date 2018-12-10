@@ -123,8 +123,8 @@
 	//     document.querySelector("#app")
 	// );
 
-	// require('./redux-example.jsx');
-	__webpack_require__(254);
+	__webpack_require__(233);
+	// require('./redux-todo-example.jsx');
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
@@ -25830,7 +25830,219 @@
 
 
 /***/ }),
-/* 233 */,
+/* 233 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+	var redux = __webpack_require__(234);
+
+	// Pure function
+	// same output using the same input no matter what
+	// takes inputs, then returns an output
+	// does not change the value of the inputs
+	// no side-effects
+	function add(a, b) {
+	    return a + b;
+	};
+
+	// impure functions
+
+	var a = 3;
+	function add(b) {
+	    return a + b;
+	}
+
+	var result;
+	function add(a, b) {
+	    result = a + b;
+	    return result;
+	}
+
+	function add(a, b) {
+	    return a + b + new Date().getSeconds();
+	}
+
+	function changeProp(obj) {
+	    // instead of obj.name = 'Jen';
+	    // return obj
+	    // that is impure.
+	    // objects and arrays are passed by reference, thus changing the value of original data
+	    // we want immutability
+	    return _extends({}, obj, {
+	        name: 'Jen'
+	    });
+	}
+
+	var startingValue = {
+	    name: 'Jun',
+	    age: 29
+	};
+
+	var res = changeProp(startingValue);
+
+	console.log(startingValue, res);
+
+	//////////////////////////////////////////////////////
+	// redux!!!!
+	/////////////////////////////////////////
+
+	// pass previous state and action
+	// reducer will do something with it
+	// return the new state
+	var stateDefault = {
+	    name: 'Anonymous',
+	    hobbies: [],
+	    movies: []
+	};
+
+	// unique hobby identifier
+	// 1st hobby will be 1
+	var nextHobbyId = 1;
+	var nextMovieId = 1;
+
+	var reducer = function reducer() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateDefault;
+	    var action = arguments[1];
+
+	    // need default if there is no state
+	    // syntax above is equivalent to this:
+	    // state = state || {name: 'Anonymous'};
+	    // meaning if no state was passed, use default value
+
+	    // console.log('new action', action);
+
+	    switch (action.type) {
+	        case 'CHANGE_NAME':
+	            return _extends({}, state, {
+	                name: action.name
+	            });
+	        case 'ADD_HOBBY':
+	            return _extends({}, state, {
+	                // es6 spread operator
+	                hobbies: [].concat(_toConsumableArray(state.hobbies), [{
+	                    id: nextHobbyId++,
+	                    hobby: action.hobby
+	                }])
+	            });
+	        case 'ADD_MOVIE':
+	            return _extends({}, state, {
+	                movies: [].concat(_toConsumableArray(state.movies), [{
+	                    id: nextMovieId++,
+	                    title: action.title,
+	                    genre: action.genre
+	                }])
+	            });
+	        case 'REMOVE_HOBBY':
+	            return _extends({}, state, {
+	                hobbies: state.hobbies.filter(function (hobby) {
+	                    return hobby.id !== action.id;
+	                })
+	            });
+	        case 'REMOVE_MOVIE':
+	            return _extends({}, state, {
+	                movies: state.movies.filter(function (movie) {
+	                    return movie.id !== action.id;
+	                })
+	            });
+	        default:
+	            return state;
+	    }
+	};
+
+	// 2nd argument lets you configure which store you wanna use
+	// for middleware functions we wanna run through redux
+	// used for/by redux dev tools Chrome Extension
+	// if no extension, it takes the argument and passes it through
+	// (f) => { return f }
+
+	var store = redux.createStore(reducer, redux.compose(window.devToolsExtension ? window.devToolsExtension() : function (f) {
+	    return f;
+	}));
+
+	//subscibe to changes
+	// takes a callback that runs when the state changes
+	// use this instead of console logging all the time
+	// when you call subscribe, it actually returns a function
+	// this function, when called, will unsusbscribe you
+
+	var unsubscribe = store.subscribe(function () {
+	    // logical thing is to check state whenever state changes
+	    var state = store.getState();
+
+	    console.log('new state is', state);
+	    document.getElementById('app').innerHTML = state.name;
+	});
+
+	// test unsubscribe by calling it after first action dispatch
+	// unsubscribe();
+
+
+	// fetch the state
+	var currentState = store.getState();
+	console.log('currentState', currentState);
+
+	// use actions to change state
+	// no need to have any arguments except 'type'
+	// type typically is in uppercase, and uses underscore for whitespace
+	var action = {
+	    type: 'CHANGE_NAME',
+	    name: 'Jun'
+	};
+
+	// dispatch an action
+	// this will run the reducer function
+	store.dispatch(action);
+
+	// add another dispatch just to check if subscribe button works
+	store.dispatch({
+	    type: 'CHANGE_NAME',
+	    name: 'Emilyyyy'
+	});
+
+	// hobby is an array but while dispatching we pass on a string
+	// use reducer to add this string to hobby array
+	store.dispatch({
+	    type: 'ADD_HOBBY',
+	    hobby: 'Running'
+	});
+
+	store.dispatch({
+	    type: 'ADD_HOBBY',
+	    hobby: 'Walking'
+	});
+
+	// add movie
+	store.dispatch({
+	    type: 'ADD_MOVIE',
+	    title: 'Perfect Blue',
+	    genre: 'Animation'
+	});
+
+	// add another movie
+	store.dispatch({
+	    type: 'ADD_MOVIE',
+	    title: 'Spring, Summer, Fall, Winter...and Spring',
+	    genre: 'Drama'
+	});
+
+	// remove arrays!
+	store.dispatch({
+	    type: 'REMOVE_HOBBY',
+	    // what id corresponds to the hobby you want removed?
+	    id: 2
+	});
+
+	store.dispatch({
+	    type: 'REMOVE_MOVIE',
+	    id: 1
+	});
+
+/***/ }),
 /* 234 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -26853,70 +27065,6 @@
 	    };
 	  });
 	}
-
-/***/ }),
-/* 254 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var redux = __webpack_require__(234);
-
-	var stateDefault = {
-	    searchText: '',
-	    showCompleted: false,
-	    todos: []
-	};
-
-	var reducer = function reducer() {
-	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateDefault;
-	    var action = arguments[1];
-
-	    switch (action.type) {
-	        case 'CHANGE_SEARCH_TEXT':
-	            return _extends({}, state, {
-	                searchText: action.searchText
-	            });
-	        default:
-	            return state;
-	    }
-	};
-
-	var store = redux.createStore(reducer, redux.compose(window.devToolsExtension ? window.devToolsExtension() : function (f) {
-	    return f;
-	}));
-
-	// subscribe to changes
-	var unsubscribe = store.subscribe(function () {
-	    // logical thing is to check state whenever state changes
-	    var state = store.getState();
-
-	    console.log('new state is', state);
-	    document.getElementById('app').innerHTML = state.searchText;
-	});
-
-	var currentState = store.getState();
-
-	console.log('currentState', currentState);
-
-	var action = {
-	    type: 'CHANGE_SEARCH_TEXT',
-	    searchText: 'search everything!'
-	};
-
-	store.dispatch(action);
-
-	store.dispatch({
-	    type: 'CHANGE_SEARCH_TEXT',
-	    searchText: 'change searchText #2!!!!'
-	});
-
-	store.dispatch({
-	    type: 'CHANGE_SEARCH_TEXT',
-	    searchText: 'change searchText a 3rd time~~'
-	});
 
 /***/ })
 /******/ ]);

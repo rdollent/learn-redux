@@ -1,7 +1,5 @@
 var redux = require('redux');
 
-console.log(redux);
-
 // Pure function
 // same output using the same input no matter what
 // takes inputs, then returns an output
@@ -59,7 +57,18 @@ console.log(startingValue, res);
 // pass previous state and action
 // reducer will do something with it
 // return the new state
-let reducer = (state = {name: 'Anonymous'}, action) => {
+const stateDefault = {
+    name: 'Anonymous',
+    hobbies: [],
+    movies: []
+};
+
+// unique hobby identifier
+// 1st hobby will be 1
+let nextHobbyId = 1;
+let nextMovieId = 1;
+
+const reducer = (state = stateDefault, action) => {
     // need default if there is no state
     // syntax above is equivalent to this:
     // state = state || {name: 'Anonymous'};
@@ -73,7 +82,40 @@ let reducer = (state = {name: 'Anonymous'}, action) => {
                 ...state,
                 name: action.name
             };
-        
+        case 'ADD_HOBBY':
+            return {
+                ...state,
+                // es6 spread operator
+                hobbies: [
+                    ...state.hobbies, 
+                    {
+                        id: nextHobbyId++,
+                        hobby: action.hobby   
+                    }
+                ]
+            };
+        case 'ADD_MOVIE':
+            return {
+                ...state,
+                movies: [
+                    ...state.movies,
+                    {
+                        id: nextMovieId++,
+                        title: action.title,
+                        genre: action.genre
+                    }
+                ]
+            };
+        case 'REMOVE_HOBBY':
+            return {
+                ...state,
+                hobbies: state.hobbies.filter((hobby) => hobby.id !== action.id)
+            };
+        case 'REMOVE_MOVIE':
+            return {
+                ...state,
+                movies: state.movies.filter((movie) => movie.id !== action.id)
+            };
         default:
             return state;
     }
@@ -102,6 +144,7 @@ let unsubscribe = store.subscribe(() => {
     
     console.log('new state is', state);
     document.getElementById('app').innerHTML = state.name;
+    
 });
 
 // test unsubscribe by calling it after first action dispatch
@@ -118,7 +161,7 @@ console.log('currentState', currentState);
 let action = {
     type: 'CHANGE_NAME',
     name: 'Jun'
-}
+};
 
 // dispatch an action
 // this will run the reducer function
@@ -129,4 +172,42 @@ store.dispatch(action);
 store.dispatch({
     type: 'CHANGE_NAME',
     name: 'Emilyyyy'
+});
+
+// hobby is an array but while dispatching we pass on a string
+// use reducer to add this string to hobby array
+store.dispatch({
+    type: 'ADD_HOBBY',
+    hobby: 'Running'
+});
+
+store.dispatch({
+    type: 'ADD_HOBBY',
+    hobby: 'Walking'
+});
+
+// add movie
+store.dispatch({
+    type: 'ADD_MOVIE',
+    title: 'Perfect Blue',
+    genre: 'Animation'
+});
+
+// add another movie
+store.dispatch({
+    type: 'ADD_MOVIE',
+    title: 'Spring, Summer, Fall, Winter...and Spring',
+    genre: 'Drama'
+});
+
+// remove arrays!
+store.dispatch({
+    type: 'REMOVE_HOBBY',
+    // what id corresponds to the hobby you want removed?
+    id: 2
+});
+
+store.dispatch({
+    type: 'REMOVE_MOVIE',
+    id: 1
 })
