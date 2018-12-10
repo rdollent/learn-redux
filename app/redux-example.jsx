@@ -80,8 +80,15 @@ let reducer = (state = {name: 'Anonymous'}, action) => {
 
 };
 
+// 2nd argument lets you configure which store you wanna use
+// for middleware functions we wanna run through redux
+// used for/by redux dev tools Chrome Extension
+// if no extension, it takes the argument and passes it through
+// (f) => { return f }
 
-let store = redux.createStore(reducer);
+let store = redux.createStore(reducer, redux.compose(
+        window.devToolsExtension ? window.devToolsExtension() : f => f
+    ));
 
 //subscibe to changes
 // takes a callback that runs when the state changes
@@ -94,7 +101,12 @@ let unsubscribe = store.subscribe(() => {
     let state = store.getState();
     
     console.log('new state is', state);
+    document.getElementById('app').innerHTML = state.name;
 });
+
+// test unsubscribe by calling it after first action dispatch
+// unsubscribe();
+
 
 // fetch the state
 let currentState = store.getState();
@@ -111,8 +123,6 @@ let action = {
 // dispatch an action
 // this will run the reducer function
 store.dispatch(action);
-
-// test unsubscribe by calling it after first action dispatch
 
 
 // add another dispatch just to check if subscribe button works

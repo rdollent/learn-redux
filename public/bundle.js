@@ -118,14 +118,13 @@
 	__webpack_require__(229);
 	// require('applicationStyles');
 
-	ReactDOM.render(React.createElement(
-	    "p",
-	    null,
-	    "Boilerplate3"
-	), document.querySelector("#app"));
+	// ReactDOM.render(
+	//     <p>Boilerplate3</p>,
+	//     document.querySelector("#app")
+	// );
 
+	// require('./redux-example.jsx');
 	__webpack_require__(254);
-	// require('./redux-todo-example.jsx');
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)))
 
 /***/ }),
@@ -26865,120 +26864,58 @@
 
 	var redux = __webpack_require__(234);
 
-	console.log(redux);
-
-	// Pure function
-	// same output using the same input no matter what
-	// takes inputs, then returns an output
-	// does not change the value of the inputs
-	// no side-effects
-	function add(a, b) {
-	    return a + b;
+	var stateDefault = {
+	    searchText: '',
+	    showCompleted: false,
+	    todos: []
 	};
 
-	// impure functions
-
-	var a = 3;
-	function add(b) {
-	    return a + b;
-	}
-
-	var result;
-	function add(a, b) {
-	    result = a + b;
-	    return result;
-	}
-
-	function add(a, b) {
-	    return a + b + new Date().getSeconds();
-	}
-
-	function changeProp(obj) {
-	    // instead of obj.name = 'Jen';
-	    // return obj
-	    // that is impure.
-	    // objects and arrays are passed by reference, thus changing the value of original data
-	    // we want immutability
-	    return _extends({}, obj, {
-	        name: 'Jen'
-	    });
-	}
-
-	var startingValue = {
-	    name: 'Jun',
-	    age: 29
-	};
-
-	var res = changeProp(startingValue);
-
-	console.log(startingValue, res);
-
-	//////////////////////////////////////////////////////
-	// redux!!!!
-	/////////////////////////////////////////
-
-	// pass previous state and action
-	// reducer will do something with it
-	// return the new state
 	var reducer = function reducer() {
-	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { name: 'Anonymous' };
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateDefault;
 	    var action = arguments[1];
 
-	    // need default if there is no state
-	    // syntax above is equivalent to this:
-	    // state = state || {name: 'Anonymous'};
-	    // meaning if no state was passed, use default value
-
-	    // console.log('new action', action);
-
 	    switch (action.type) {
-	        case 'CHANGE_NAME':
+	        case 'CHANGE_SEARCH_TEXT':
 	            return _extends({}, state, {
-	                name: action.name
+	                searchText: action.searchText
 	            });
-
 	        default:
 	            return state;
 	    }
 	};
 
-	var store = redux.createStore(reducer);
+	var store = redux.createStore(reducer, redux.compose(window.devToolsExtension ? window.devToolsExtension() : function (f) {
+	    return f;
+	}));
 
-	//subscibe to changes
-	// takes a callback that runs when the state changes
-	// use this instead of console logging all the time
-	// when you call subscribe, it actually returns a function
-	// this function, when called, will unsusbscribe you
-
+	// subscribe to changes
 	var unsubscribe = store.subscribe(function () {
 	    // logical thing is to check state whenever state changes
 	    var state = store.getState();
 
 	    console.log('new state is', state);
+	    document.getElementById('app').innerHTML = state.searchText;
 	});
 
-	// fetch the state
 	var currentState = store.getState();
+
 	console.log('currentState', currentState);
 
-	// use actions to change state
-	// no need to have any arguments except 'type'
-	// type typically is in uppercase, and uses underscore for whitespace
 	var action = {
-	    type: 'CHANGE_NAME',
-	    name: 'Jun'
+	    type: 'CHANGE_SEARCH_TEXT',
+	    searchText: 'search everything!'
+	};
 
-	    // dispatch an action
-	    // this will run the reducer function
-	};store.dispatch(action);
+	store.dispatch(action);
 
-	// test unsubscribe by calling it after first action dispatch
-
-
-	// add another dispatch just to check if subscribe button works
 	store.dispatch({
-	    type: 'CHANGE_NAME',
-	    name: 'Emilyyyy'
+	    type: 'CHANGE_SEARCH_TEXT',
+	    searchText: 'change searchText #2!!!!'
+	});
+
+	store.dispatch({
+	    type: 'CHANGE_SEARCH_TEXT',
+	    searchText: 'change searchText a 3rd time~~'
 	});
 
 /***/ })

@@ -18,12 +18,12 @@ $(document).foundation();
 require("style!css!sass!applicationStyles");
 // require('applicationStyles');
 
-ReactDOM.render(
-    <p>Boilerplate3</p>,
-    document.querySelector("#app")
-);
+// ReactDOM.render(
+//     <p>Boilerplate3</p>,
+//     document.querySelector("#app")
+// );
 
-require('./redux-example.jsx');
-// require('./redux-todo-example.jsx');
+// require('./redux-example.jsx');
+require('./redux-todo-example.jsx');
 
 
