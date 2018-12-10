@@ -25905,54 +25905,127 @@
 	var nextHobbyId = 1;
 	var nextMovieId = 1;
 
-	var reducer = function reducer() {
-	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : stateDefault;
+	// const oldReducer = (state = stateDefault, action) => {
+	//     // need default if there is no state
+	//     // syntax above is equivalent to this:
+	//     // state = state || {name: 'Anonymous'};
+	//     // meaning if no state was passed, use default value
+
+	//     // console.log('new action', action);
+
+	//     switch (action.type) {
+	//         case 'CHANGE_NAME':
+	//             return {
+	//                 ...state,
+	//                 name: action.name
+	//             };
+	//         case 'ADD_HOBBY':
+	//             return {
+	//                 ...state,
+	//                 // es6 spread operator
+	//                 hobbies: [
+	//                     ...state.hobbies, 
+	//                     {
+	//                         id: nextHobbyId++,
+	//                         hobby: action.hobby   
+	//                     }
+	//                 ]
+	//             };
+	//         case 'ADD_MOVIE':
+	//             return {
+	//                 ...state,
+	//                 movies: [
+	//                     ...state.movies,
+	//                     {
+	//                         id: nextMovieId++,
+	//                         title: action.title,
+	//                         genre: action.genre
+	//                     }
+	//                 ]
+	//             };
+	//         case 'REMOVE_HOBBY':
+	//             return {
+	//                 ...state,
+	//                 hobbies: state.hobbies.filter((hobby) => hobby.id !== action.id)
+	//             };
+	//         case 'REMOVE_MOVIE':
+	//             return {
+	//                 ...state,
+	//                 movies: state.movies.filter((movie) => movie.id !== action.id)
+	//             };
+	//         default:
+	//             return state;
+	//     }
+
+	// };
+
+
+	// new reducer for multiple reducers
+
+	// reduce function for managing name
+	// state is now a string, since it only manages one part of the entire state (name, instead of name, hobbies, movies)
+	var nameReducer = function nameReducer() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Anonymous';
 	    var action = arguments[1];
-
-	    // need default if there is no state
-	    // syntax above is equivalent to this:
-	    // state = state || {name: 'Anonymous'};
-	    // meaning if no state was passed, use default value
-
-	    // console.log('new action', action);
 
 	    switch (action.type) {
 	        case 'CHANGE_NAME':
-	            return _extends({}, state, {
-	                name: action.name
-	            });
+	            return action.name;
+	        default:
+	            return state;
+	    }
+	};
+
+	// default of hobbies state is an empty array
+	var hobbiesReducer = function hobbiesReducer() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	    var action = arguments[1];
+
+	    switch (action.type) {
 	        case 'ADD_HOBBY':
-	            return _extends({}, state, {
-	                // es6 spread operator
-	                hobbies: [].concat(_toConsumableArray(state.hobbies), [{
-	                    id: nextHobbyId++,
-	                    hobby: action.hobby
-	                }])
-	            });
-	        case 'ADD_MOVIE':
-	            return _extends({}, state, {
-	                movies: [].concat(_toConsumableArray(state.movies), [{
-	                    id: nextMovieId++,
-	                    title: action.title,
-	                    genre: action.genre
-	                }])
-	            });
+	            return [].concat(_toConsumableArray(state), [// state here is just the hobbies array in state object
+	            {
+	                id: nextHobbyId++,
+	                hobby: action.hobby
+	            }]);
 	        case 'REMOVE_HOBBY':
-	            return _extends({}, state, {
-	                hobbies: state.hobbies.filter(function (hobby) {
-	                    return hobby.id !== action.id;
-	                })
-	            });
-	        case 'REMOVE_MOVIE':
-	            return _extends({}, state, {
-	                movies: state.movies.filter(function (movie) {
-	                    return movie.id !== action.id;
-	                })
+	            return state.filter(function (hobby) {
+	                return hobby.id !== action.id;
 	            });
 	        default:
 	            return state;
 	    }
 	};
+
+	var moviesReducer = function moviesReducer() {
+	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+	    var action = arguments[1];
+
+	    switch (action.type) {
+	        case 'ADD_MOVIE':
+	            return [].concat(_toConsumableArray(state), [{
+	                id: nextMovieId++,
+	                title: action.title,
+	                genre: action.genre
+	            }]);
+	        case 'REMOVE_MOVIE':
+	            return state.filter(function (movie) {
+	                return movie.id !== action.id;
+	            });
+	        default:
+	            return state;
+	    }
+	};
+
+	// argument is a set of key-value pairs
+	// represents item and state you want this reducer to manage
+	// state: reducer function
+	// e.g. the name state will be managed by nameReducer
+	var reducer = redux.combineReducers({
+	    name: nameReducer,
+	    hobbies: hobbiesReducer,
+	    movies: moviesReducer
+	});
 
 	// 2nd argument lets you configure which store you wanna use
 	// for middleware functions we wanna run through redux
