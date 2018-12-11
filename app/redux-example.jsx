@@ -227,6 +227,56 @@ const removeMovie = (id) => {
 };
 
 
+
+/// map reducer and action generators
+// status of fetching location only
+const mapReducer = (state = {isFetching: false, url: undefined}, action) => {
+    switch(action.type) {
+        case 'START_LOCATION_FETCH':
+            return {
+                isFetching: true,
+                url: undefined
+            };
+        case 'COMPLETE_LOCATION_FETCH':
+            return {
+                isFetching: false,
+                url: action.url
+            };
+        default:
+            return state;
+    }
+};
+
+const startLocationFetch = () => {
+    return {
+        type: 'START_LOCATION_FETCH'
+    };
+};
+
+const completeLocationFetch = (url) => {
+    return {
+        type: 'COMPLETE_LOCATION_FETCH',
+        url
+    };
+};
+
+
+// reducer for fetching location
+const fetchLocation = () => {
+  store.dispatch(startLocationFetch());
+  
+  // use axios for xmlhttprequests
+  axios.get('http://ipinfo.io').then((res) => {
+      // json response in data. we need loc property
+      let loc = res.data.loc;
+      let baseUrl = 'http://maps.google.com?q=';
+      
+      store.dispatch(completeLocationFetch(baseUrl + loc));
+      
+  });
+};
+
+
 // argument is a set of key-value pairs
 // represents item and state you want this reducer to manage
 // state: reducer function
@@ -234,7 +284,8 @@ const removeMovie = (id) => {
 const reducer = redux.combineReducers({
     name: nameReducer,
     hobbies: hobbiesReducer,
-    movies: moviesReducer
+    movies: moviesReducer,
+    map: mapReducer
 });
 
 // 2nd argument lets you configure which store you wanna use
