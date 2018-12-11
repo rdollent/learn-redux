@@ -25894,11 +25894,6 @@
 	// pass previous state and action
 	// reducer will do something with it
 	// return the new state
-	var stateDefault = {
-	    name: 'Anonymous',
-	    hobbies: [],
-	    movies: []
-	};
 
 	// unique hobby identifier
 	// 1st hobby will be 1
@@ -25964,6 +25959,11 @@
 
 	// reduce function for managing name
 	// state is now a string, since it only manages one part of the entire state (name, instead of name, hobbies, movies)
+
+	// action generators
+	// action generators take all the parameters you need to generate and action
+	// and returns the object
+	///////////////////////////////
 	var nameReducer = function nameReducer() {
 	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'Anonymous';
 	    var action = arguments[1];
@@ -25976,7 +25976,20 @@
 	    }
 	};
 
+	// action generator to change name
+	var changeName = function changeName(name) {
+	    return {
+	        type: 'CHANGE_NAME',
+	        name: name
+	        //the same as name: name
+
+	    };
+	};
+
+	/////////////////////////////////////////////////////////////
 	// default of hobbies state is an empty array
+	// hobbies reducer and action generators
+
 	var hobbiesReducer = function hobbiesReducer() {
 	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 	    var action = arguments[1];
@@ -25997,6 +26010,26 @@
 	    }
 	};
 
+	// action generator to add hobby and for use with dispatch
+	var addHobby = function addHobby(hobby) {
+	    return {
+	        type: 'ADD_HOBBY',
+	        hobby: hobby
+	    };
+	};
+
+	// action generator to remove hobby
+	var removeHobby = function removeHobby(id) {
+	    return {
+	        type: 'REMOVE_HOBBY',
+	        id: id
+	    };
+	};
+
+	////////////////////////////////////////////////////
+	// movie reducer and action generator
+	//
+
 	var moviesReducer = function moviesReducer() {
 	    var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
 	    var action = arguments[1];
@@ -26015,6 +26048,25 @@
 	        default:
 	            return state;
 	    }
+	};
+
+	/// 
+	// action generator for ADD_MOVIE
+	var addMovie = function addMovie(title, genre) {
+	    return {
+	        type: 'ADD_MOVIE',
+	        title: title,
+	        // equivalent to title: title
+	        genre: genre
+	    };
+	};
+
+	// action generator to remove hobby
+	var removeMovie = function removeMovie(id) {
+	    return {
+	        type: 'REMOVE_MOVIE',
+	        id: id
+	    };
 	};
 
 	// argument is a set of key-value pairs
@@ -26062,58 +26114,80 @@
 	// use actions to change state
 	// no need to have any arguments except 'type'
 	// type typically is in uppercase, and uses underscore for whitespace
-	var action = {
-	    type: 'CHANGE_NAME',
-	    name: 'Jun'
-	};
-
+	//
+	// let action = {
+	//     type: 'CHANGE_NAME',
+	//     name: 'Jun'
+	// };
+	//
 	// dispatch an action
 	// this will run the reducer function
-	store.dispatch(action);
+	//
+	// store.dispatch(action);
+
+	// or use action generator
+	store.dispatch(changeName('Jun'));
 
 	// add another dispatch just to check if subscribe button works
-	store.dispatch({
-	    type: 'CHANGE_NAME',
-	    name: 'Emilyyyy'
-	});
+	// store.dispatch({
+	//     type: 'CHANGE_NAME',
+	//     name: 'Emilyyyy'
+	// });
+
+	// or use action generator
+	store.dispatch(changeName('Emilyyyy'));
 
 	// hobby is an array but while dispatching we pass on a string
 	// use reducer to add this string to hobby array
-	store.dispatch({
-	    type: 'ADD_HOBBY',
-	    hobby: 'Running'
-	});
+	// store.dispatch({
+	//     type: 'ADD_HOBBY',
+	//     hobby: 'Running'
+	// });
 
-	store.dispatch({
-	    type: 'ADD_HOBBY',
-	    hobby: 'Walking'
-	});
+	// store.dispatch({
+	//     type: 'ADD_HOBBY',
+	//     hobby: 'Walking'
+	// });
+
+	// use addHobby action generator instead
+	store.dispatch(addHobby('Running'));
+	store.dispatch(addHobby('Walking'));
 
 	// add movie
-	store.dispatch({
-	    type: 'ADD_MOVIE',
-	    title: 'Perfect Blue',
-	    genre: 'Animation'
-	});
+	// store.dispatch({
+	//     type: 'ADD_MOVIE',
+	//     title: 'Perfect Blue',
+	//     genre: 'Animation'
+	// });
 
-	// add another movie
-	store.dispatch({
-	    type: 'ADD_MOVIE',
-	    title: 'Spring, Summer, Fall, Winter...and Spring',
-	    genre: 'Drama'
-	});
+	// // add another movie
+	// store.dispatch({
+	//     type: 'ADD_MOVIE',
+	//     title: 'Spring, Summer, Fall, Winter...and Spring',
+	//     genre: 'Drama'
+	// });
+
+	// use action generator to add movie instead
+	store.dispatch(addMovie('Perfect Blue', 'Animation'));
+	store.dispatch(addMovie('Spring, Summer, Fall, Winter...and Spring', 'Drama'));
 
 	// remove arrays!
-	store.dispatch({
-	    type: 'REMOVE_HOBBY',
-	    // what id corresponds to the hobby you want removed?
-	    id: 2
-	});
+	// store.dispatch({
+	//     type: 'REMOVE_HOBBY',
+	//     // what id corresponds to the hobby you want removed?
+	//     id: 2
+	// });
+	//
+	// or use action generator instead to remove hobby
+	store.dispatch(removeHobby(2));
 
-	store.dispatch({
-	    type: 'REMOVE_MOVIE',
-	    id: 1
-	});
+	// store.dispatch({
+	//     type: 'REMOVE_MOVIE',
+	//     id: 1
+	// })
+
+	// use action generator to remove movie
+	store.dispatch(removeMovie(1));
 
 /***/ }),
 /* 234 */
