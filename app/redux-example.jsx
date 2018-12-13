@@ -1,4 +1,5 @@
-var redux = require('redux');
+const redux = require('redux');
+const axios = require('axios');
 
 // Pure function
 // same output using the same input no matter what
@@ -266,10 +267,10 @@ const fetchLocation = () => {
   store.dispatch(startLocationFetch());
   
   // use axios for xmlhttprequests
-  axios.get('http://ipinfo.io').then((res) => {
+  axios.get('https://ipinfo.io').then((res) => {
       // json response in data. we need loc property
       let loc = res.data.loc;
-      let baseUrl = 'http://maps.google.com?q=';
+      let baseUrl = 'https://maps.google.com?q=';
       
       store.dispatch(completeLocationFetch(baseUrl + loc));
       
@@ -294,7 +295,7 @@ const reducer = redux.combineReducers({
 // if no extension, it takes the argument and passes it through
 // (f) => { return f }
 
-let store = redux.createStore(reducer, redux.compose(
+const store = redux.createStore(reducer, redux.compose(
         window.devToolsExtension ? window.devToolsExtension() : f => f
     ));
 
@@ -309,7 +310,12 @@ let unsubscribe = store.subscribe(() => {
     let state = store.getState();
     
     console.log('new state is', state);
-    document.getElementById('app').innerHTML = state.name;
+    // document.getElementById('app').innerHTML = state.name;
+    if(state.map.isFetching) {
+        document.getElementById('app').innerHTML = 'Loading...';
+    } else if(state.map.url) {
+        document.getElementById('app').innerHTML = `<a href=${state.map.url} target="_blank">View Your Location</a>`;
+    }
     
 });
 
@@ -320,6 +326,8 @@ let unsubscribe = store.subscribe(() => {
 // fetch the state
 let currentState = store.getState();
 console.log('currentState', currentState);
+
+fetchLocation();
 
 // use actions to change state
 // no need to have any arguments except 'type'
