@@ -1,6 +1,10 @@
 const redux = require('redux');
 const axios = require('axios');
 
+// actions variable
+const actions = require('./actions/index');
+const store = require('./store/configureStore').configure();
+
 // Pure function
 // same output using the same input no matter what
 // takes inputs, then returns an output
@@ -59,10 +63,6 @@ console.log(startingValue, res);
 // reducer will do something with it
 // return the new state
 
-// unique hobby identifier
-// 1st hobby will be 1
-let nextHobbyId = 1;
-let nextMovieId = 1;
 
 // const oldReducer = (state = stateDefault, action) => {
 //     // need default if there is no state
@@ -120,184 +120,7 @@ let nextMovieId = 1;
 
 
 
-// new reducer for multiple reducers
 
-// reduce function for managing name
-// state is now a string, since it only manages one part of the entire state (name, instead of name, hobbies, movies)
-
-// action generators
-// action generators take all the parameters you need to generate and action
-// and returns the object
-///////////////////////////////
-const nameReducer = (state = 'Anonymous', action) => {
-    switch(action.type) {
-      case 'CHANGE_NAME':
-        return action.name;
-      default:
-        return state;
-    }
-};
-
-// action generator to change name
-const changeName = (name) => {
-    return {
-        type: 'CHANGE_NAME',
-        name
-        //the same as name: name
-        
-    };
-};
-
-/////////////////////////////////////////////////////////////
-// default of hobbies state is an empty array
-// hobbies reducer and action generators
-
-const hobbiesReducer = (state = [], action) => {
-    switch(action.type) {
-        case 'ADD_HOBBY':
-            return [
-                ...state, // state here is just the hobbies array in state object
-                {
-                    id: nextHobbyId++,
-                    hobby: action.hobby   
-                }
-            ];
-        case 'REMOVE_HOBBY':
-            return state.filter((hobby) => hobby.id !== action.id);
-        default:
-            return state;
-    }
-};
-
-// action generator to add hobby and for use with dispatch
-const addHobby = (hobby) => {
-    return {
-        type: 'ADD_HOBBY',
-        hobby
-    };
-};
-
-// action generator to remove hobby
-const removeHobby = (id) => {
-    return {
-        type: 'REMOVE_HOBBY',
-        id
-    };
-};
-
-
-////////////////////////////////////////////////////
-// movie reducer and action generator
-//
-
-const moviesReducer = (state = [], action) => {
-    switch(action.type) {
-        case 'ADD_MOVIE':
-            return [
-                ...state,
-                {
-                    id: nextMovieId++,
-                    title: action.title,
-                    genre: action.genre
-                }
-            ];
-        case 'REMOVE_MOVIE':
-            return state.filter((movie) => movie.id !== action.id);
-        default:
-            return state;
-    }
-};
-
-/// 
-// action generator for ADD_MOVIE
-const addMovie = (title, genre) => {
-    return {
-        type: 'ADD_MOVIE',
-        title,
-        // equivalent to title: title
-        genre
-    };
-};
-
-// action generator to remove hobby
-const removeMovie = (id) => {
-    return {
-        type: 'REMOVE_MOVIE',
-        id
-    };
-};
-
-
-
-/// map reducer and action generators
-// status of fetching location only
-const mapReducer = (state = {isFetching: false, url: undefined}, action) => {
-    switch(action.type) {
-        case 'START_LOCATION_FETCH':
-            return {
-                isFetching: true,
-                url: undefined
-            };
-        case 'COMPLETE_LOCATION_FETCH':
-            return {
-                isFetching: false,
-                url: action.url
-            };
-        default:
-            return state;
-    }
-};
-
-const startLocationFetch = () => {
-    return {
-        type: 'START_LOCATION_FETCH'
-    };
-};
-
-const completeLocationFetch = (url) => {
-    return {
-        type: 'COMPLETE_LOCATION_FETCH',
-        url
-    };
-};
-
-
-// reducer for fetching location
-const fetchLocation = () => {
-  store.dispatch(startLocationFetch());
-  
-  // use axios for xmlhttprequests
-  axios.get('https://ipinfo.io').then((res) => {
-      // json response in data. we need loc property
-      let loc = res.data.loc;
-      let baseUrl = 'https://maps.google.com?q=';
-      
-      store.dispatch(completeLocationFetch(baseUrl + loc));
-      
-  });
-};
-
-
-// argument is a set of key-value pairs
-// represents item and state you want this reducer to manage
-// state: reducer function
-// e.g. the name state will be managed by nameReducer
-const reducer = redux.combineReducers({
-    name: nameReducer,
-    hobbies: hobbiesReducer,
-    movies: moviesReducer,
-    map: mapReducer
-});
-
-// 2nd argument lets you configure which store you wanna use
-// for middleware functions we wanna run through redux
-// used for/by redux dev tools Chrome Extension
-// if no extension, it takes the argument and passes it through
-// (f) => { return f }
-
-const store = redux.createStore(reducer, redux.compose(
-        window.devToolsExtension ? window.devToolsExtension() : f => f
-    ));
 
 //subscibe to changes
 // takes a callback that runs when the state changes
@@ -327,7 +150,7 @@ let unsubscribe = store.subscribe(() => {
 let currentState = store.getState();
 console.log('currentState', currentState);
 
-fetchLocation();
+actions.fetchLocation();
 
 // use actions to change state
 // no need to have any arguments except 'type'
@@ -344,7 +167,7 @@ fetchLocation();
 // store.dispatch(action);
 
 // or use action generator
-store.dispatch(changeName('Jun'));
+store.dispatch(actions.changeName('Jun'));
 
 
 
@@ -355,7 +178,7 @@ store.dispatch(changeName('Jun'));
 // });
 
 // or use action generator
-store.dispatch(changeName('Emilyyyy'));
+store.dispatch(actions.changeName('Emilyyyy'));
 
 // hobby is an array but while dispatching we pass on a string
 // use reducer to add this string to hobby array
@@ -370,8 +193,8 @@ store.dispatch(changeName('Emilyyyy'));
 // });
 
 // use addHobby action generator instead
-store.dispatch(addHobby('Running'));
-store.dispatch(addHobby('Walking'));
+store.dispatch(actions.addHobby('Running'));
+store.dispatch(actions.addHobby('Walking'));
 
 // add movie
 // store.dispatch({
@@ -388,8 +211,8 @@ store.dispatch(addHobby('Walking'));
 // });
 
 // use action generator to add movie instead
-store.dispatch(addMovie('Perfect Blue', 'Animation'));
-store.dispatch(addMovie('Spring, Summer, Fall, Winter...and Spring', 'Drama'));
+store.dispatch(actions.addMovie('Perfect Blue', 'Animation'));
+store.dispatch(actions.addMovie('Spring, Summer, Fall, Winter...and Spring', 'Drama'));
 
 // remove arrays!
 // store.dispatch({
@@ -399,7 +222,7 @@ store.dispatch(addMovie('Spring, Summer, Fall, Winter...and Spring', 'Drama'));
 // });
 //
 // or use action generator instead to remove hobby
-store.dispatch(removeHobby(2));
+store.dispatch(actions.removeHobby(2));
 
 // store.dispatch({
 //     type: 'REMOVE_MOVIE',
@@ -407,4 +230,4 @@ store.dispatch(removeHobby(2));
 // })
 
 // use action generator to remove movie
-store.dispatch(removeMovie(1));
+store.dispatch(actions.removeMovie(1));
