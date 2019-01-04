@@ -1,5 +1,5 @@
 const redux = require('redux');
-const axios = require('axios');
+
 
 // actions variable
 const actions = require('./actions/index');
@@ -150,7 +150,7 @@ let unsubscribe = store.subscribe(() => {
 let currentState = store.getState();
 console.log('currentState', currentState);
 
-actions.fetchLocation();
+store.dispatch(actions.fetchLocation());
 
 // use actions to change state
 // no need to have any arguments except 'type'

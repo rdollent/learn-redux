@@ -1,4 +1,8 @@
 const redux = require('redux');
+const thunk = require('redux-thunk').default;
+// redux-thunk teaches redux to read actions that aren't objects
+// fetchLocation is  a function
+const axios = require('axios');
 const {nameReducer, hobbiesReducer, moviesReducer, mapReducer} = require('./../reducers/index');
 export const configure = () => {
         
@@ -20,7 +24,8 @@ export const configure = () => {
     // (f) => { return f }
     
     const store = redux.createStore(reducer, redux.compose(
-            window.devToolsExtension ? window.devToolsExtension() : f => f
+        redux.applyMiddleware(thunk),
+        window.devToolsExtension ? window.devToolsExtension() : f => f
     ));
     return store;
 };

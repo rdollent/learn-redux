@@ -69,7 +69,22 @@ export const completeLocationFetch = (url) => {
 
 // reducer for fetching location
 export const fetchLocation = () => {
-  store.dispatch(startLocationFetch());
+
+    return (dispatch, getState) => {
+        // once separated from original file
+    // and contained into its own file
+    // and own folder
+    // and made modular
+    // i.e. app/actions/index.jsx
+    // need redux-thunk to be able to call
+    // store.dispatch()
+    // why do we need this?
+    // because we need to maintain one store
+    // throughout the whole app so we can not
+    // create another store here
+//   store.dispatch(startLocationFetch());
+
+dispatch(startLocationFetch());
   
   // use axios for xmlhttprequests
   axios.get('https://ipinfo.io').then((res) => {
@@ -80,4 +95,5 @@ export const fetchLocation = () => {
       store.dispatch(completeLocationFetch(baseUrl + loc));
       
   });
+    } 
 };
