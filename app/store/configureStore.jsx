@@ -2,7 +2,6 @@ const redux = require('redux');
 const thunk = require('redux-thunk').default;
 // redux-thunk teaches redux to read actions that aren't objects
 // fetchLocation is  a function
-const axios = require('axios');
 const {nameReducer, hobbiesReducer, moviesReducer, mapReducer} = require('./../reducers/index');
 export const configure = () => {
         
