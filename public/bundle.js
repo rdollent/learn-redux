@@ -26371,7 +26371,6 @@
 	    value: true
 	});
 	var axios = __webpack_require__(246);
-	var store = __webpack_require__(272).configure();
 
 	// action generator to change name
 	var changeName = exports.changeName = function changeName(name) {
@@ -26456,7 +26455,7 @@
 	            var loc = res.data.loc;
 	            var baseUrl = 'https://maps.google.com?q=';
 
-	            store.dispatch(completeLocationFetch(baseUrl + loc));
+	            dispatch(completeLocationFetch(baseUrl + loc));
 	        });
 	    };
 	};

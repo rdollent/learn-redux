@@ -1,5 +1,4 @@
 const axios = require('axios');
-const store = require('../store/configureStore').configure();
 
 
 
@@ -93,7 +92,7 @@ dispatch(startLocationFetch());
       let loc = res.data.loc;
       let baseUrl = 'https://maps.google.com?q=';
       
-      store.dispatch(completeLocationFetch(baseUrl + loc));
+      dispatch(completeLocationFetch(baseUrl + loc));
       
   });
     } 
